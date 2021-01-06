@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.1.1 r1855137">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
@@ -9,7 +9,7 @@
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
-      <stringProp name="TestPlan.user_define_classpath">/home/stefan/Downloads/postgresql-42.2.18.jar</stringProp>
+      <stringProp name="TestPlan.user_define_classpath">/home/stefan/Downloads/postgresql-42.2.5.jar</stringProp>
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
@@ -18,7 +18,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">100</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">500</stringProp>
+        <stringProp name="ThreadGroup.num_threads">1000</stringProp>
         <stringProp name="ThreadGroup.ramp_time">10</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -41,8 +41,8 @@ vars.put(&quot;longitude&quot;, Double.toString(Math.abs( new Random().nextDoubl
         <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Once Only Controller" enabled="true"/>
         <hashTree>
           <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Create Request" enabled="true">
-            <stringProp name="dataSource">h2</stringProp>
-            <stringProp name="query">INSERT INTO SESSION (id, location, status) VALUES (&apos;${customUuid}&apos;, ST_GeomFromText(&apos;POINT(7 52)&apos;, 4326), &apos;🎯&apos;);</stringProp>
+            <stringProp name="dataSource">update</stringProp>
+            <stringProp name="query">INSERT INTO bench (id, location, status) VALUES (&apos;${customUuid}&apos;, ST_GeomFromText(&apos;POINT(7 52)&apos;, 4326), &apos;🎯&apos;);</stringProp>
             <stringProp name="queryArguments"></stringProp>
             <stringProp name="queryArgumentsTypes"></stringProp>
             <stringProp name="queryTimeout"></stringProp>
@@ -55,8 +55,8 @@ vars.put(&quot;longitude&quot;, Double.toString(Math.abs( new Random().nextDoubl
           <hashTree/>
         </hashTree>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Update Request" enabled="true">
-          <stringProp name="dataSource">h2</stringProp>
-          <stringProp name="query">UPDATE SESSION SET location =  ST_GeomFromText(&apos;POINT(${latitude} ${longitude})&apos;, 4326), status = &apos;x&apos; WHERE id = &apos;${customUuid}&apos;;</stringProp>
+          <stringProp name="dataSource">update</stringProp>
+          <stringProp name="query">UPDATE bench SET location =  ST_GeomFromText(&apos;POINT(${latitude} ${longitude})&apos;, 4326), status = &apos;x&apos; WHERE id = &apos;${customUuid}&apos;;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
@@ -67,22 +67,9 @@ vars.put(&quot;longitude&quot;, Double.toString(Math.abs( new Random().nextDoubl
           <stringProp name="variableNames"></stringProp>
         </JDBCSampler>
         <hashTree/>
-        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Search Request" enabled="false">
-          <stringProp name="dataSource">h2</stringProp>
-          <stringProp name="query">SELECT * FROM Session ORDER BY ST_DistanceSphere(location, ST_GeomFromText(&apos;POINT(${latitude} ${longitude})&apos;, 4326)) DESC LIMIT 10;</stringProp>
-          <stringProp name="queryArguments"></stringProp>
-          <stringProp name="queryArgumentsTypes"></stringProp>
-          <stringProp name="queryTimeout"></stringProp>
-          <stringProp name="queryType">Select Statement</stringProp>
-          <stringProp name="resultSetHandler">Count Records</stringProp>
-          <stringProp name="resultSetMaxRows"></stringProp>
-          <stringProp name="resultVariable"></stringProp>
-          <stringProp name="variableNames"></stringProp>
-        </JDBCSampler>
-        <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Search Request" enabled="true">
-          <stringProp name="dataSource">h2</stringProp>
-          <stringProp name="query">SELECT * FROM Session s WHERE s.id = &apos;${customUuid}&apos;;</stringProp>
+          <stringProp name="dataSource">update</stringProp>
+          <stringProp name="query">SELECT * FROM bench WHERE id = &apos;${customUuid}&apos;;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
@@ -94,18 +81,18 @@ vars.put(&quot;longitude&quot;, Double.toString(Math.abs( new Random().nextDoubl
         </JDBCSampler>
         <hashTree/>
         <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Gaussian Random Timer" enabled="true">
-          <stringProp name="ConstantTimer.delay">100</stringProp>
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
           <stringProp name="RandomTimer.range">100.0</stringProp>
         </GaussianRandomTimer>
         <hashTree/>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
-        <stringProp name="ThreadGroup.on_sample_error">stoptestnow</stringProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">100</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">500</stringProp>
+        <stringProp name="ThreadGroup.num_threads">1000</stringProp>
         <stringProp name="ThreadGroup.ramp_time">10</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -123,8 +110,11 @@ vars.put(&quot;longitude&quot;, Double.toString(Math.abs( new Random().nextDoubl
         </JSR223PreProcessor>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Geo Request" enabled="true">
-          <stringProp name="dataSource">h2</stringProp>
-          <stringProp name="query">SELECT * FROM Session s WHERE ST_DWithin(s.location, ST_GeomFromText(&apos;POINT(-55.63393680224897 52.82947840304675)&apos;, 4326), 3) ORDER BY ST_DistanceSphere(location, ST_GeomFromText(&apos;POINT(${latitude} ${longitude})&apos;, 4326)) DESC LIMIT 10;</stringProp>
+          <stringProp name="dataSource">search</stringProp>
+          <stringProp name="query">--SELECT * FROM geobench ORDER BY ST_DistanceSphere(location, ST_GeomFromText(&apos;POINT(${latitude} ${longitude})&apos;, 4326)) DESC LIMIT 10;
+
+SELECT * FROM bench ORDER BY location &lt;-&gt; ST_GeomFromText(&apos;POINT(${latitude} ${longitude})&apos;, 4326) LIMIT 10;
+</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
@@ -215,55 +205,18 @@ vars.put(&quot;longitude&quot;, Double.toString(Math.abs( new Random().nextDoubl
         <stringProp name="filename"></stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Graph Results" enabled="true">
-        <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <objProp>
-          <name>saveConfig</name>
-          <value class="SampleSaveConfiguration">
-            <time>true</time>
-            <latency>true</latency>
-            <timestamp>true</timestamp>
-            <success>true</success>
-            <label>true</label>
-            <code>true</code>
-            <message>true</message>
-            <threadName>true</threadName>
-            <dataType>true</dataType>
-            <encoding>false</encoding>
-            <assertions>true</assertions>
-            <subresults>true</subresults>
-            <responseData>false</responseData>
-            <samplerData>false</samplerData>
-            <xml>false</xml>
-            <fieldNames>true</fieldNames>
-            <responseHeaders>false</responseHeaders>
-            <requestHeaders>false</requestHeaders>
-            <responseDataOnError>false</responseDataOnError>
-            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
-            <assertionsResultsToSave>0</assertionsResultsToSave>
-            <bytes>true</bytes>
-            <sentBytes>true</sentBytes>
-            <url>true</url>
-            <threadCounts>true</threadCounts>
-            <idleTime>true</idleTime>
-            <connectTime>true</connectTime>
-          </value>
-        </objProp>
-        <stringProp name="filename"></stringProp>
-      </ResultCollector>
-      <hashTree/>
-      <JDBCDataSource guiclass="TestBeanGUI" testclass="JDBCDataSource" testname="JDBC Connection Configuration" enabled="true">
+      <JDBCDataSource guiclass="TestBeanGUI" testclass="JDBCDataSource" testname="update-connection" enabled="true">
         <boolProp name="autocommit">true</boolProp>
         <stringProp name="checkQuery"></stringProp>
         <stringProp name="connectionAge">5000</stringProp>
         <stringProp name="connectionProperties"></stringProp>
-        <stringProp name="dataSource">h2</stringProp>
-        <stringProp name="dbUrl">jdbc:postgresql:database/geo-benchmark-postgres</stringProp>
-        <stringProp name="driver">org.h2.Driver</stringProp>
+        <stringProp name="dataSource">update</stringProp>
+        <stringProp name="dbUrl">jdbc:postgresql://localhost/bench</stringProp>
+        <stringProp name="driver">org.postgresql.Driver</stringProp>
         <stringProp name="initQuery"></stringProp>
         <boolProp name="keepAlive">true</boolProp>
         <stringProp name="password">mysecretpassword</stringProp>
-        <stringProp name="poolMax">0</stringProp>
+        <stringProp name="poolMax">20</stringProp>
         <boolProp name="preinit">false</boolProp>
         <stringProp name="timeout">10000</stringProp>
         <stringProp name="transactionIsolation">DEFAULT</stringProp>
@@ -276,18 +229,18 @@ vars.put(&quot;longitude&quot;, Double.toString(Math.abs( new Random().nextDoubl
         <stringProp name="checkQuery"></stringProp>
         <stringProp name="connectionAge">5000</stringProp>
         <stringProp name="connectionProperties"></stringProp>
-        <stringProp name="dataSource">h2-search</stringProp>
-        <stringProp name="dbUrl">jdbc:h2:tcp://localhost/~/Downloads/geo-benchmark-h2</stringProp>
-        <stringProp name="driver">org.h2.Driver</stringProp>
+        <stringProp name="dataSource">search</stringProp>
+        <stringProp name="dbUrl">jdbc:postgresql://localhost/bench</stringProp>
+        <stringProp name="driver">org.postgresql.Driver</stringProp>
         <stringProp name="initQuery"></stringProp>
         <boolProp name="keepAlive">true</boolProp>
-        <stringProp name="password"></stringProp>
-        <stringProp name="poolMax">0</stringProp>
+        <stringProp name="password">mysecretpassword</stringProp>
+        <stringProp name="poolMax">20</stringProp>
         <boolProp name="preinit">false</boolProp>
         <stringProp name="timeout">10000</stringProp>
         <stringProp name="transactionIsolation">DEFAULT</stringProp>
         <stringProp name="trimInterval">60000</stringProp>
-        <stringProp name="username">sa</stringProp>
+        <stringProp name="username">postgres</stringProp>
       </JDBCDataSource>
       <hashTree/>
     </hashTree>
