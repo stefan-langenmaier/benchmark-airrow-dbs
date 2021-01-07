@@ -1,4 +1,4 @@
-# MariaDB
+# MySQL
 
 ## Setup
 
