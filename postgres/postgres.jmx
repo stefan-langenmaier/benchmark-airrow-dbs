@@ -109,12 +109,29 @@ vars.put(&quot;longitude&quot;, Double.toString(Math.abs( new Random().nextDoubl
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223PreProcessor>
         <hashTree/>
+        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Simple Geo Request" enabled="false">
+          <stringProp name="dataSource">search</stringProp>
+          <stringProp name="query">SELECT ST_DistanceSphere(location, ST_GeomFromText(&apos;POINT(${latitude} ${longitude})&apos;, 4326)) AS mydistance FROM bench ORDER BY mydistance DESC LIMIT 10;</stringProp>
+          <stringProp name="queryArguments"></stringProp>
+          <stringProp name="queryArgumentsTypes"></stringProp>
+          <stringProp name="queryTimeout"></stringProp>
+          <stringProp name="queryType">Select Statement</stringProp>
+          <stringProp name="resultSetHandler">Count Records</stringProp>
+          <stringProp name="resultSetMaxRows"></stringProp>
+          <stringProp name="resultVariable"></stringProp>
+          <stringProp name="variableNames"></stringProp>
+        </JDBCSampler>
+        <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Geo Request" enabled="true">
           <stringProp name="dataSource">search</stringProp>
-          <stringProp name="query">--SELECT * FROM geobench ORDER BY ST_DistanceSphere(location, ST_GeomFromText(&apos;POINT(${latitude} ${longitude})&apos;, 4326)) DESC LIMIT 10;
-
-SELECT * FROM bench ORDER BY location &lt;-&gt; ST_GeomFromText(&apos;POINT(${latitude} ${longitude})&apos;, 4326) LIMIT 10;
-</stringProp>
+          <stringProp name="query">--SELECT * FROM bench ORDER BY location &lt;-&gt; ST_GeomFromText(&apos;POINT(${latitude} ${longitude})&apos;, 4326) LIMIT 10000;
+WITH index_query AS (
+  SELECT ST_Distance(location, ST_GeomFromText(&apos;POINT(${latitude} ${longitude})&apos;, 4326)) as d, status
+	FROM bench ORDER BY location &lt;-&gt; ST_GeomFromText(&apos;POINT(${latitude} ${longitude})&apos;, 4326) LIMIT 1000)
+  SELECT *
+	FROM index_query
+  ORDER BY d*jaro(status, &apos;EMOJI&apos;)
+  LIMIT 1;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
