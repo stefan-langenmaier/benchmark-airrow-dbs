@@ -158,7 +158,7 @@ vars.put(&quot;longitude&quot;, Double.toString(Math.abs( new Random().nextDoubl
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223PreProcessor>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Geo Request" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Geo Request" enabled="false">
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
@@ -194,6 +194,103 @@ vars.put(&quot;longitude&quot;, Double.toString(Math.abs( new Random().nextDoubl
           }&#xd;
         }&#xd;
       }&#xd;
+    }&#xd;
+  }&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">localhost</stringProp>
+          <stringProp name="HTTPSampler.port">9200</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/bench/_search</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Boost Geo Request" enabled="false">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+  &quot;query&quot;: {&#xd;
+    &quot;bool&quot;: {&#xd;
+      &quot;must&quot;: {&#xd;
+        &quot;match_all&quot;: {}&#xd;
+      },&#xd;
+      &quot;filter&quot;: {&#xd;
+        &quot;geo_distance&quot;: {&#xd;
+          &quot;distance&quot;: &quot;1000km&quot;,&#xd;
+          &quot;location&quot;: {&#xd;
+            &quot;lat&quot;: ${latitude},&#xd;
+            &quot;lon&quot;: ${longitude}&#xd;
+          }&#xd;
+        }&#xd;
+      }&#xd;
+    }&#xd;
+  }&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">localhost</stringProp>
+          <stringProp name="HTTPSampler.port">9200</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/bench/_search</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Custom Geo Request" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+  &quot;query&quot;: {&#xd;
+    &quot;function_score&quot;: {&#xd;
+      &quot;query&quot;: {&#xd;
+        &quot;match&quot; : {&#xd;
+            &quot;status&quot;: {&#xd;
+              &quot;query&quot;: &quot;XD&quot;,&#xd;
+              &quot;boost&quot;: 2&#xd;
+            }&#xd;
+        }&#xd;
+      },&#xd;
+      &quot;functions&quot;: [&#xd;
+        {&#xd;
+          &quot;gauss&quot;: {&#xd;
+            &quot;location&quot;: {&#xd;
+              &quot;origin&quot;: {&#xd;
+                &quot;lat&quot;: ${latitude},&#xd;
+                &quot;lon&quot;: ${longitude}&#xd;
+              },&#xd;
+              &quot;offset&quot;: &quot;0km&quot;,&#xd;
+              &quot;scale&quot;: &quot;200km&quot;,&#xd;
+              &quot;decay&quot;: 0.3&#xd;
+            }&#xd;
+          }&#xd;
+        }&#xd;
+      ]&#xd;
     }&#xd;
   }&#xd;
 }</stringProp>
